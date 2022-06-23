@@ -1,3 +1,6 @@
+import os
+
+
 def create_data_lake():
     """Cree el data lake con sus capas.
 
@@ -24,16 +27,16 @@ def create_data_lake():
     import pandas as pd
     import xlwt
 
-    def descargar_archivo(ruta, file_name, extension):
-        for año in file_name:
-            url_rute= ruta + '/' + año + extension + "?raw=true"
-            nombre_archivo= "data_lake/landing/" , '{}{}'.format(año, extension)
-            descarga= pd.read_excel(url_rute)
-        return
-
-    ruta= "https://github.com/jdvelasq/datalabs/blob/master/datasets/precio_bolsa_nacional/xls/"
-    file_name1 = [str(año) for año in range(1995, 2016)]
-    file_name2 = [str(año) for año in range(2018, 2022)]
+    
+    
+    parent_dir = "data_lake/business/reports"
+    
+    directory = "figures"
+    
+    path = os.path.join(parent_dir, directory)
+    
+    os.mkdir(path)
+    return
 
     raise NotImplementedError("Implementar esta función")
 

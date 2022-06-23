@@ -1,3 +1,7 @@
+from email import header
+from operator import index
+
+
 def compute_daily_prices():
     """Compute los precios promedios diarios.
 
@@ -12,7 +16,15 @@ def compute_daily_prices():
 
 
     """
-    raise NotImplementedError("Implementar esta función")
+    import pandas as pd
+    
+    df=pd.read_csv('data_lake/cleansed/precios-horarios.csv', index_col=None, header=0)
+    df=df[["fecha","precio"]]
+    df=df.groupby('fecha').mean({'precio': 'precios'})
+    df.reset_index(inplace = True)
+    df.to_csv("data_lake/business/precios-diarios.csv", index=None, header=True)
+    
+    #raise NotImplementedError("Implementar esta función")
 
 
 if __name__ == "__main__":

@@ -83,10 +83,10 @@ class computar_precio_mensual(Task):
             compute_monthly_prices() 
  
  
-if name == '__main__': 
+if __name__ == '__main__': 
     luigi.run(["computar_precio_mensual", "--local-scheduler"]) 
  
-if name == "__main__": 
+if __name__ == "__main__": 
     import doctest 
  
     doctest.testmod()
