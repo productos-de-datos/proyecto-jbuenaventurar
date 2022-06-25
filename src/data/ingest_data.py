@@ -20,8 +20,9 @@ def ingest_data():
     def descargar_archivo(ruta, file_name, extension):
         for año in file_name:
             url_rute= ruta + '/' + año + extension + "?raw=true"
-            nombre_archivo= "data_lake/landing/" , '{}{}'.format(año, extension)
+            nombre_archivo= "data_lake/landing/" + '{}{}'.format(año, extension)
             descarga= pd.read_excel(url_rute)
+            descarga.to_excel("data_lake/landing/{}{}".format(año, extension), index=None, header=True)
         return
 
     ruta= "https://github.com/jdvelasq/datalabs/blob/master/datasets/precio_bolsa_nacional/xls/"
@@ -32,11 +33,12 @@ def ingest_data():
     descargar_archivo(ruta, file_name_xlsx, ".xlsx")
     
     file_name_xlsx = ["2016", "2017"]
+    descargar_archivo(ruta, file_name_xlsx, ".xls")
     
-    raise NotImplementedError("Implementar esta función")
+    #raise NotImplementedError("Implementar esta función")
 
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()
+    ingest_data()

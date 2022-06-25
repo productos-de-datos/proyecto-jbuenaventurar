@@ -29,5 +29,5 @@ def compute_daily_prices():
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()
+    compute_daily_prices()

@@ -1,5 +1,7 @@
+from calendar import c
 import os
-
+import pandas as pd
+import xlwt
 
 def create_data_lake():
     """Cree el data lake con sus capas.
@@ -24,10 +26,17 @@ def create_data_lake():
 
 
     """
-    import pandas as pd
-    import xlwt
-
+    os.mkdir('./data_lake')
     
+    parent_dir = "data_lake"  
+    
+    carpetas = ['landing', 'raw', 'cleansed', 'business']
+    [os.mkdir(os.path.join(parent_dir, c)) for c in carpetas]
+    
+    parent_dir = "data_lake/business"
+    
+    carpetas = ['reports', 'features', 'forecasts']
+    [os.mkdir(os.path.join(parent_dir, c)) for c in carpetas]
     
     parent_dir = "data_lake/business/reports"
     
@@ -38,10 +47,10 @@ def create_data_lake():
     os.mkdir(path)
     return
 
-    raise NotImplementedError("Implementar esta función")
+    #raise NotImplementedError("Implementar esta función")
 
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()
+    create_data_lake()
