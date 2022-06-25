@@ -28,7 +28,7 @@ def make_monthly_prices_plot():
     #raise NotImplementedError("Implementar esta función") 
  
  
-if name == "__main__": 
+if __name__ == "__main__": 
  
     import doctest 
  

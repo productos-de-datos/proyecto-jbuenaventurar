@@ -1,5 +1,4 @@
 from email import header
-from operator import index
 
 
 def compute_daily_prices():
