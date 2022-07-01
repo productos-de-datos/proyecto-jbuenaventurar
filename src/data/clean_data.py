@@ -1,3 +1,54 @@
+""" 
+Módulo de limpieza de datos. 
+------------------------------------------------------------------------------- 
+Función load_data: Lee los archivos cvs que se encuentran en la ruta data_lake/raw/  
+y los concatena en un solo archivo, elimina registros con nulos en la variable fecha 
+ 
+Función transfort_data: traspone los precios por hora y por fecha: fecha, hora, precio 
+ 
+Función save_data: Guarda los datos en el archivo data_lake/cleansed/precios-horarios.csv 
+ 
+Función clean_data: Orquesta las anteriores funciones con el fin de concatenar  
+en un solo archivo los csv de la ruta data_lake/raw/ y los guarda en el archivo  
+precios-horarios.csv en la ruta data_lake/raw/ garantizando que la columna fecha  
+y precio no contengan datos nulos 
+""" 
+ 
+ 
+import pandas as pd 
+import glob 
+ 
+ 
+def load_data(in_file): 
+    path_file = glob.glob(in_file) 
+ 
+    lista_archivos = [] 
+    for filename in path_file: 
+        df = pd.read_csv(filename, index_col=None, header=0) 
+        lista_archivos.append(df) 
+ 
+    read_file = pd.concat(lista_archivos, axis=0, ignore_index=True) 
+    read_file = read_file[read_file["Fecha"].notnull()] 
+ 
+    return read_file 
+ 
+ 
+def transform_data(read_file): 
+    ''' 
+    >>> transform_data(pd.DataFrame({'Fecha':('2021-06-02','2021-03-02','2021-01-12','2021-01-03'),'h0':(12,13,14,15),'h1':(16,17,14,15),'h2':(12,13,14,15)})).head(20)['precio'].tolist() 
+    [12, 13, 14, 15, 16, 17, 14, 15, 12, 13, 14, 15] 
+    ''' 
+    data = pd.melt(read_file, id_vars=['Fecha']) 
+    data = data.rename( 
+        columns={'Fecha': 'fecha', 'variable': 'hora', 'value': 'precio'}) 
+    data = data[data["precio"].notnull()] 
+    return data 
+ 
+ 
+def save_data(data, out_file): 
+    data.to_csv(out_file, index=None, header=True) 
+ 
+ 
 def clean_data(): 
     """Realice la limpieza y transformación de los archivos CSV. 
  
@@ -12,41 +63,32 @@ def clean_data():
  
  
     """ 
-    import pandas as pd 
-    import glob 
+    try: 
+        in_file = r'data_lake/raw/*.csv' 
+        out_file = "data_lake/cleansed/precios-horarios.csv" 
+        read_file = load_data(in_file) 
+        data = transform_data(read_file) 
+        save_data(data, out_file) 
  
-    path_file = glob.glob(r'data_lake/raw/*.csv') 
-    li = [] 
+    except: 
+        raise NotImplementedError("Implementar esta función") 
  
-    for filename in path_file: 
-        df = pd.read_csv(filename, index_col=None, header=0) 
-        li.append(df) 
-    read_file = pd.concat(li, axis=0, ignore_index=True) 
-    read_file = read_file[read_file["Fecha"].notnull()] 
  
-    fecha1 = read_file.iloc[:, 0]  # fecha 
-    lista_datos = [] 
+def test_columns_dataframe(): 
+    dic = { 
+        'Fecha': ('2021-06-02', '2021-03-02', '2021-01-12', '2021-01-03'), 
+        'h0': (12, 13, 14, 15), 
+        'h1': (16, 17, 14, 15), 
+        'h2': (12, 13, 14, 15) 
+    } 
+    df = pd.DataFrame(dic) 
+    expect = [12, 13, 14, 15, 16, 17, 14, 15, 12, 13, 14, 15] 
+    assert transform_data(df).tail(20)['precio'].tolist() == expect 
  
-    precio = 0 
-    contador_filas = 0 
-    for fecha in fecha1: 
-        for hora in range(0, 24): 
-            precio = (read_file.iloc[contador_filas, (hora+1)]) 
-            lista_datos.append([fecha, hora, precio]) 
-        contador_filas += 1 
-    df = pd.DataFrame(lista_datos, columns=["fecha", "hora", "precio"]) 
-    df = df[df["fecha"].notnull()] 
-    df.to_csv("data_lake/cleansed/precios-horarios.csv", 
-              index=None, header=True) 
-    #raise NotImplementedError("Implementar esta función") 
-    # return 
  
-    # clean_data() 
-    
-    
 if __name__ == "__main__": 
-
+ 
     import doctest 
-
+ 
     doctest.testmod() 
     clean_data()
